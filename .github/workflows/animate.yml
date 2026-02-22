@@ -19,7 +19,7 @@ jobs:
 
       - name: Create Transition Video
         run: |
-          # This line now finds your .png files and turns them into a video
+          # This line looks for PNG files specifically since that's what you uploaded
           ffmpeg -framerate 1/2 -pattern_type glob -i 'inputs/*.png' \
           -c:v libx264 -pix_fmt yuv420p -vf "scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2" \
           -y output_animation.mp4
@@ -29,6 +29,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add output_animation.mp4
-          git commit -m "Generated animation from screenshots" || echo "No changes"
+          git commit -m "Generated animation from PNGs" || echo "No changes to commit"
           git push
           
