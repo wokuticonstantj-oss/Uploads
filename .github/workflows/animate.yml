@@ -2,7 +2,10 @@ name: Auto-Animate Photos
 on:
   push:
     paths:
-      - 'inputs/**' # Only runs when you add files to the "inputs" folder
+      - 'inputs/**'
+
+permissions:
+  contents: write  # This gives the robot permission to save the video
 
 jobs:
   build:
@@ -16,16 +19,15 @@ jobs:
 
       - name: Create Transition Video
         run: |
-          # This script takes all .jpg files in /inputs and creates a 5-second 
-          # slideshow with a simple fade transition.
-          ffmpeg -framerate 1/3 -pattern_type glob -i 'inputs/*.jpg' \
+          # This version looks for JPG, JPEG, and PNG files
+          ffmpeg -framerate 1/3 -pattern_type glob -i 'inputs/*.{[jJ][pP][gG],[jJ][pP][eE][gG],[pP][nN][gG]}' \
           -c:v libx264 -pix_fmt yuv420p -vf "scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2" \
-          output_animation.mp4
+          -y output_animation.mp4
 
       - name: Commit and Push
         run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add output_animation.mp4
           git commit -m "Generated new animation" || echo "No changes to commit"
           git push
