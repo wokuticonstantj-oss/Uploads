@@ -6,79 +6,85 @@
     <title>Bulanga Progressive | Electronics Club</title>
     <style>
         body { 
-            margin: 0; 
-            padding: 20px;
-            background: #0a0b10; /* Dark Tech Background */
-            color: #e0e0e0;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
-            min-height: 100vh;
+            margin: 0; background: #05050a; color: #e0e0e0;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
-        .container {
-            max-width: 900px;
-            width: 100%;
+        #visual-title {
+            font-size: 2.8rem;
+            color: #00f2ff;
             text-align: center;
-        }
-        h1 { 
-            color: #00f2ff; /* Neon Blue */
             text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 5px;
-            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+            margin: 40px 0;
+            transition: transform 0.1s ease-out; /* Smooth beat response */
+            text-shadow: 0 0 10px #00f2ff;
         }
-        .tagline {
-            color: #888;
-            margin-bottom: 30px;
-            font-style: italic;
-        }
-        .video-box {
-            position: relative;
-            border: 2px solid #333;
-            border-radius: 12px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.8);
-            background: #000;
-            overflow: hidden;
+        .video-container {
+            width: 90%; max-width: 800px;
+            border: 2px solid #333; border-radius: 15px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+            overflow: hidden; background: #000;
         }
         video { width: 100%; display: block; }
-        
-        .music-card {
-            margin-top: 30px;
-            background: #161b22;
-            padding: 20px;
-            border-radius: 50px;
-            border-left: 5px solid #00f2ff;
-            display: inline-flex;
-            align-items: center;
-            gap: 15px;
+        .controls {
+            margin-top: 30px; background: rgba(255,255,255,0.05);
+            padding: 20px; border-radius: 50px; display: flex; align-items: center; gap: 20px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Bulanga Secondary School</h1>
-        <p class="tagline">Progressive Electronics & Communication Club</p>
+    <h1 id="visual-title">BULANGA SECONDARY SCHOOL</h1>
 
-        <div class="video-box">
-            <video autoplay muted loop playsinline controls>
-                <source src="output_animation.mp4" type="video/mp4">
-            </video>
-        </div>
-
-        <div class="music-card">
-            <div style="text-align: left;">
-                <div style="font-size: 0.8rem; color: #00f2ff;">CLUB ANTHEM</div>
-                <div style="font-weight: bold;">Mowzey Radio — Somesa Egwanga</div>
-            </div>
-            <audio controls>
-                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-            </audio>
-        </div>
+    <div class="video-container">
+        <video autoplay muted loop playsinline id="clubVideo">
+            <source src="output_animation.mp4" type="video/mp4">
+        </video>
     </div>
 
-    <p style="margin-top: 50px; color: #444; font-size: 0.7rem;">SYSTEM STATUS: ONLINE | ENCODING: H.264</p>
+    <div class="controls">
+        <span style="font-size: 0.8rem; color: #00f2ff;">BEAT-SYNC ACTIVE:</span>
+        <audio id="audioPlayer" controls>
+            <source src="music.mp3" type="audio/mpeg">
+        </audio>
+    </div>
 
+    <script>
+        const audio = document.getElementById('audioPlayer');
+        const title = document.getElementById('visual-title');
+        
+        // Audio Visualizer Setup
+        const context = new (window.AudioContext || window.webkitAudioContext)();
+        const src = context.createMediaElementSource(audio);
+        const analyser = context.createAnalyser();
+        src.connect(analyser);
+        analyser.connect(context.destination);
+        analyser.fftSize = 256;
+
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        function renderFrame() {
+            requestAnimationFrame(renderFrame);
+            analyser.getByteFrequencyData(dataArray);
+
+            // Get the average loudness (bass/beats)
+            let sum = 0;
+            for(let i = 0; i < 10; i++) { sum += dataArray[i]; }
+            let average = sum / 10;
+
+            // Scale the title and increase glow based on volume
+            let scale = 1 + (average / 500); 
+            let glow = average / 5;
+            title.style.transform = `scale(${scale})`;
+            title.style.textShadow = `0 0 ${glow}px #00f2ff`;
+        }
+
+        audio.onplay = () => {
+            context.resume();
+            renderFrame();
+        };
+    </script>
 </body>
 </html>
+
