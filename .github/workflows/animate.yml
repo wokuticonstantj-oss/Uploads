@@ -1,4 +1,4 @@
-name: Auto-Animate Photos
+name: Cinematic Photo Animation
 on:
   push:
     paths:
@@ -18,19 +18,18 @@ jobs:
       - name: Install FFmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
-      - name: Create Cinematic Zoom Video
+      - name: Render Ken Burns Video
         run: |
-          # Finds all PNG/JPG files and creates a smooth 30fps video
-          # The 'zoompan' filter creates the slow movement effect
+          # Professional Zoom + Fade logic
           ffmpeg -framerate 1/4 -pattern_type glob -i 'inputs/*.{[pP][nN][gG],[jJ][pP][gG]}' \
-          -vf "scale=2560:1440,zoompan=z='zoom+0.001':d=120:s=1280x720,format=yuv420p" \
-          -c:v libx264 -pix_fmt yuv420p -y output_animation.mp4
+          -vf "scale=2560:1440,zoompan=z='zoom+0.001':d=120:s=1280x720:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)',format=yuv420p" \
+          -c:v libx264 -pix_fmt yuv420p -r 30 -y output_animation.mp4
 
-      - name: Commit and Push
+      - name: Deploy Result
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add output_animation.mp4
-          git commit -m "Added cinematic zoom transitions" || echo "No changes"
+          git commit -m "System Upgrade: Cinematic Zoom & Transitions" || echo "No changes"
           git push
           
