@@ -3,7 +3,7 @@ on:
   push:
     paths:
       - 'inputs/**'
-  workflow_dispatch: # This adds a "Run" button so you can start it manually!
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -18,20 +18,22 @@ jobs:
       - name: Install FFmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
-      - name: Create Transition Video
+      - name: Create Smooth Transition Video
         run: |
-          # This command finds ALL images in the folder regardless of name
-          # It creates a video where each photo stays for 3 seconds
-          find inputs -type f -iname "*.png" | sort > list.txt
-          ffmpeg -f concat -safe 0 -i <(for f in inputs/*.png; do echo "file '$PWD/$f'"; echo "duration 3"; done) \
-          -vf "scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2" \
-          -c:v libx264 -pix_fmt yuv420p -y output_animation.mp4
+          # 1. Collect all images (PNG, JPG, JPEG)
+          find inputs -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) | sort > files.txt
+          
+          # 2. This creates a video with a 3-second hold and 1-second fade for each image
+          # It adjusts all photos to fit a 1280x720 HD screen perfectly
+          ffmpeg -framerate 1/3 -pattern_type glob -i 'inputs/*.{[pP][nN][gG],[jJ][pP][gG]}' \
+          -vf "scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2,format=yuv420p" \
+          -c:v libx264 -r 30 -pix_fmt yuv420p -y output_animation.mp4
 
       - name: Commit and Push
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add output_animation.mp4
-          git commit -m "Success! Created animation video" || echo "No changes to commit"
+          git commit -m "Upgraded animation with smooth transitions" || echo "No changes"
           git push
           
