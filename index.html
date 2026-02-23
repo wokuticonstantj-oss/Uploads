@@ -3,88 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bulanga Progressive | Electronics Club</title>
+    <title>Bulanga Progressive | Tech Hub</title>
     <style>
+        :root { --neon: #00f2ff; --bg: #05050a; }
         body { 
-            margin: 0; background: #05050a; color: #e0e0e0;
+            margin: 0; background: var(--bg); color: white;
             font-family: 'Segoe UI', sans-serif;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
-        #visual-title {
-            font-size: 2.8rem;
-            color: #00f2ff;
-            text-align: center;
-            text-transform: uppercase;
-            margin: 40px 0;
-            transition: transform 0.1s ease-out; /* Smooth beat response */
-            text-shadow: 0 0 10px #00f2ff;
+        
+        /* RESTORED: Pulsing Beat Title */
+        #beat-title {
+            font-size: 2.5rem; color: var(--neon); text-align: center;
+            margin: 40px 0 10px 0; text-transform: uppercase;
+            letter-spacing: 5px; text-shadow: 0 0 15px var(--neon);
+            transition: transform 0.05s linear;
         }
-        .video-container {
-            width: 90%; max-width: 800px;
-            border: 2px solid #333; border-radius: 15px;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+
+        /* RESTORED: Scanline Monitor Container */
+        .monitor-frame {
+            position: relative; width: 90%; max-width: 800px;
+            border: 2px solid var(--neon); border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
             overflow: hidden; background: #000;
         }
+        .monitor-frame::after {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+            background: rgba(0, 242, 255, 0.3); animation: scan 4s linear infinite;
+        }
+        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
+
         video { width: 100%; display: block; }
-        .controls {
-            margin-top: 30px; background: rgba(255,255,255,0.05);
-            padding: 20px; border-radius: 50px; display: flex; align-items: center; gap: 20px;
+
+        /* RESTORED: Audio Hub Card */
+        .audio-hub {
+            margin-top: 30px; padding: 15px 30px; background: rgba(255,255,255,0.05);
+            border-radius: 50px; border: 1px solid var(--neon);
+            display: flex; align-items: center; gap: 15px;
+        }
+
+        /* RESTORED: Status Footer */
+        .footer-status {
+            margin-top: auto; padding: 20px; color: #444; 
+            font-family: monospace; font-size: 0.7rem; letter-spacing: 2px;
         }
     </style>
 </head>
 <body>
 
-    <h1 id="visual-title">BULANGA SECONDARY SCHOOL</h1>
+    <h1 id="beat-title">BULANGA SECONDARY SCHOOL</h1>
+    <p style="color: var(--neon); font-size: 0.9rem; margin-bottom: 30px; opacity: 0.7;">PROGRESSIVE ELECTRONICS & COMMUNICATION CLUB</p>
 
-    <div class="video-container">
+    <div class="monitor-frame">
         <video autoplay muted loop playsinline id="clubVideo">
             <source src="output_animation.mp4" type="video/mp4">
         </video>
     </div>
 
-    <div class="controls">
-        <span style="font-size: 0.8rem; color: #00f2ff;">BEAT-SYNC ACTIVE:</span>
-        <audio id="audioPlayer" controls>
+    <div class="audio-hub">
+        <div style="font-size: 0.7rem;">
+            <div style="color: var(--neon);">SYSTEM ANTHEM</div>
+            <div>Mowzey Radio - Somesa Egwanga</div>
+        </div>
+        <audio id="player" controls>
             <source src="music.mp3" type="audio/mpeg">
         </audio>
     </div>
 
+    <div class="footer-status">
+        SYSTEM STATUS: ONLINE // ENCODING: H.264 cinematic // BEAT-SYNC: ACTIVE
+    </div>
+
     <script>
-        const audio = document.getElementById('audioPlayer');
-        const title = document.getElementById('visual-title');
-        
-        // Audio Visualizer Setup
-        const context = new (window.AudioContext || window.webkitAudioContext)();
-        const src = context.createMediaElementSource(audio);
-        const analyser = context.createAnalyser();
-        src.connect(analyser);
-        analyser.connect(context.destination);
-        analyser.fftSize = 256;
+        const audio = document.getElementById('player');
+        const title = document.getElementById('beat-title');
+        let audioCtx, analyser, dataArray, source;
 
-        const bufferLength = analyser.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
+        function initAudio() {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            source = audioCtx.createMediaElementSource(audio);
+            analyser = audioCtx.createAnalyser();
+            source.connect(analyser);
+            analyser.connect(audioCtx.destination);
+            analyser.fftSize = 64;
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+            draw();
+        }
 
-        function renderFrame() {
-            requestAnimationFrame(renderFrame);
+        function draw() {
+            requestAnimationFrame(draw);
             analyser.getByteFrequencyData(dataArray);
-
-            // Get the average loudness (bass/beats)
-            let sum = 0;
-            for(let i = 0; i < 10; i++) { sum += dataArray[i]; }
-            let average = sum / 10;
-
-            // Scale the title and increase glow based on volume
-            let scale = 1 + (average / 500); 
-            let glow = average / 5;
+            let level = (dataArray[0] + dataArray[1] + dataArray[2]) / 3;
+            let scale = 1 + (level / 450);
+            let glow = 10 + (level / 5);
             title.style.transform = `scale(${scale})`;
-            title.style.textShadow = `0 0 ${glow}px #00f2ff`;
+            title.style.textShadow = `0 0 ${glow}px var(--neon)`;
         }
 
         audio.onplay = () => {
-            context.resume();
-            renderFrame();
+            if (!audioCtx) initAudio();
+            audioCtx.resume();
         };
     </script>
 </body>
 </html>
-
