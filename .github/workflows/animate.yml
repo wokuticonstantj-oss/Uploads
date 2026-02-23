@@ -21,6 +21,7 @@ jobs:
       - name: Render Ken Burns Video
         run: |
           # Professional Zoom + Fade logic
+          # Takes all images in /inputs and creates a 720p HD MP4
           ffmpeg -framerate 1/4 -pattern_type glob -i 'inputs/*.{[pP][nN][gG],[jJ][pP][gG]}' \
           -vf "scale=2560:1440,zoompan=z='zoom+0.001':d=120:s=1280x720:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)',format=yuv420p" \
           -c:v libx264 -pix_fmt yuv420p -r 30 -y output_animation.mp4
@@ -30,6 +31,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add output_animation.mp4
-          git commit -m "System Upgrade: Cinematic Zoom & Transitions" || echo "No changes"
+          git commit -m "System Upgrade: Cinematic Zoom & Beat-Sync Support" || echo "No changes"
           git push
           
