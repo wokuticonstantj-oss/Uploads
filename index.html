@@ -3,116 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bulanga Progressive | Tech Hub</title>
-    <style>
-        :root { --neon: #00f2ff; --bg: #05050a; }
-        body { 
-            margin: 0; background: var(--bg); color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-        }
-        
-        /* Beat-Sync Reactive Title */
-        #beat-title {
-            font-size: 2.5rem; color: var(--neon); text-align: center;
-            margin: 40px 0 10px 0; text-transform: uppercase;
-            letter-spacing: 5px; text-shadow: 0 0 15px var(--neon);
-            will-change: transform;
-        }
-
-        /* Scanline Monitor Effect */
-        .monitor-frame {
-            position: relative; width: 90%; max-width: 800px;
-            border: 2px solid var(--neon); border-radius: 10px;
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
-            overflow: hidden; background: #000;
-        }
-        .monitor-frame::after {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
-            background: rgba(0, 242, 255, 0.3); animation: scan 4s linear infinite;
-            pointer-events: none;
-        }
-        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
-
-        video { width: 100%; display: block; }
-
-        /* Audio Hub Interface */
-        .audio-hub {
-            margin-top: 30px; padding: 15px 30px; background: rgba(255,255,255,0.05);
-            border-radius: 50px; border: 1px solid var(--neon);
-            display: flex; align-items: center; gap: 15px;
-            backdrop-filter: blur(5px);
-        }
-
-        .footer-status {
-            margin-top: auto; padding: 20px; color: #444; 
-            font-family: monospace; font-size: 0.7rem; letter-spacing: 2px;
-        }
-    </style>
+    <title>Bulanga Progressive - Tech Interface</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1 id="beat-title">BULANGA SECONDARY SCHOOL</h1>
-    <p style="color: var(--neon); font-size: 0.9rem; margin-bottom: 30px; opacity: 0.7;">PROGRESSIVE ELECTRONICS & COMMUNICATION CLUB</p>
-
-    <div class="monitor-frame">
-        <video autoplay muted loop playsinline id="clubVideo">
-            <source src="output_animation.mp4" type="video/mp4">
-        </video>
-    </div>
-
-    <div class="audio-hub">
-        <div style="font-size: 0.7rem;">
-            <div style="color: var(--neon); font-weight: bold;">CLUB ANTHEM</div>
-            <div>Mowzey Radio - Somesa Egwanga</div>
+    <div id="overlay">
+        <div class="glitch-wrapper" onclick="startSystem()">
+            <button class="power-btn">INITIALIZE SYSTEM</button>
+            <p style="color: #00d2ff; margin-top: 10px; font-size: 0.8rem;">CLICK TO BOOT HARDWARE</p>
         </div>
-        <audio id="player" controls preload="auto">
-            <source src="music.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
     </div>
 
-    <div class="footer-status">
-        SYSTEM STATUS: ONLINE // ENCODING: H.264 CINEMATIC // BEAT-SYNC: ACTIVE
+    <canvas id="canvas"></canvas>
+
+    <audio id="bg-music" loop>
+        <source src="your-music-file.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="main-container">
+        <header>
+            <h1 id="main-title"></h1>
+            <p class="subtitle">PROGRESSIVE ELECTRONICS & COMMUNICATION CLUB</p>
+        </header>
+
+        <section class="hardware-wrapper">
+            <div class="image-frame">
+                <img src="usb_module.png" alt="Hardware Module">
+                <div class="scan-line"></div>
+                <div class="corner-tl"></div>
+                <div class="corner-br"></div>
+            </div>
+        </section>
+
+        <section class="audio-control-panel">
+            <div class="status-dot"></div>
+            <div class="track-info">
+                <span class="label">SYSTEM AUDIO:</span>
+                <marquee class="track-name">Mowzey Radio - Somesa Egwanga | ACTIVE</marquee>
+            </div>
+        </section>
     </div>
 
-    <script>
-        const audio = document.getElementById('player');
-        const title = document.getElementById('beat-title');
-        let audioCtx, analyser, dataArray, source;
-
-        function initAudio() {
-            // Setup Web Audio API for beat detection
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            source = audioCtx.createMediaElementSource(audio);
-            analyser = audioCtx.createAnalyser();
-            source.connect(analyser);
-            analyser.connect(audioCtx.destination);
-            analyser.fftSize = 64; 
-            dataArray = new Uint8Array(analyser.frequencyBinCount);
-            renderBeat();
-        }
-
-        function renderBeat() {
-            requestAnimationFrame(renderBeat);
-            analyser.getByteFrequencyData(dataArray);
-            
-            // Focus on bass frequencies (beats)
-            let level = (dataArray[0] + dataArray[1] + dataArray[2]) / 3;
-            
-            // Adjust sensitivity: Increase 450 to make it pulse less, decrease for more
-            let scale = 1 + (level / 450);
-            let glow = 10 + (level / 5);
-            
-            title.style.transform = `scale(${scale})`;
-            title.style.textShadow = `0 0 ${glow}px var(--neon)`;
-        }
-
-        // Browsers require a click to start audio analysis
-        audio.onplay = () => {
-            if (!audioCtx) initAudio();
-            audioCtx.resume();
-        };
-    </script>
+    <script src="script.js"></script>
 </body>
-</html>
+    </html>
+    
