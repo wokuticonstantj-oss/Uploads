@@ -1,0 +1,65 @@
+:root {
+    --blue: #00d2ff;
+    --dark: #020508;
+    --glow: 0 0 15px rgba(0, 210, 255, 0.6);
+}
+
+body, html {
+    margin: 0; padding: 0;
+    background-color: var(--dark);
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    overflow: hidden;
+}
+
+#canvas { position: fixed; top: 0; left: 0; z-index: -1; }
+
+#overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, #0a192f 0%, #020508 100%);
+    z-index: 1000; display: flex; justify-content: center; align-items: center;
+    text-align: center; transition: 1s ease; cursor: pointer;
+}
+
+.power-btn {
+    background: transparent; border: 2px solid var(--blue);
+    color: var(--blue); padding: 15px 30px; font-size: 1.2rem;
+    box-shadow: var(--glow); letter-spacing: 3px; cursor: pointer;
+}
+
+.main-container {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; height: 100vh; opacity: 0; transition: 2s;
+}
+
+h1 { color: var(--blue); text-shadow: var(--glow); font-size: 2.2rem; }
+
+/* Video Styling */
+.video-frame {
+    position: relative; border: 1px solid var(--blue);
+    margin-top: 20px; box-shadow: var(--glow); line-height: 0;
+}
+
+video { width: 100%; max-width: 400px; filter: brightness(1.2) contrast(1.1); }
+
+.scan-line {
+    position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+    background: var(--blue); opacity: 0.6; box-shadow: var(--glow);
+    animation: scan 4s linear infinite;
+}
+
+@keyframes scan { 0% {top: 0;} 100% {top: 100%;} }
+
+.status-bar {
+    margin-top: 20px; color: var(--blue); font-size: 0.8rem;
+    border: 1px solid var(--blue); padding: 5px 15px; border-radius: 20px;
+}
+
+.pulse-dot {
+    height: 8px; width: 8px; background-color: var(--blue);
+    border-radius: 50%; display: inline-block; margin-right: 5px;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse { 0% {opacity: 1;} 50% {opacity: 0.3;} 100% {opacity: 1;} }
+      
