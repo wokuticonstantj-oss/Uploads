@@ -3,49 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bulanga Progressive - Tech Interface</title>
+    <title>Bulanga Tech - Image Showcase</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="overlay">
-        <div class="glitch-wrapper" onclick="startSystem()">
+    <div id="overlay" onclick="startApp()">
+        <div class="boot-content">
             <button class="power-btn">INITIALIZE SYSTEM</button>
-            <p style="color: #00d2ff; margin-top: 10px; font-size: 0.8rem;">CLICK TO BOOT HARDWARE</p>
+            <p class="blink">CLICK TO START PRESENTATION</p>
         </div>
     </div>
 
-    <canvas id="canvas"></canvas>
-
     <audio id="bg-music" loop>
-        <source src="your-music-file.mp3" type="audio/mpeg">
+        <source src="anthem.mp3" type="audio/mpeg">
     </audio>
 
     <div class="main-container">
-        <header>
-            <h1 id="main-title"></h1>
-            <p class="subtitle">PROGRESSIVE ELECTRONICS & COMMUNICATION CLUB</p>
-        </header>
+        <h1 id="title">BULANGA SECONDARY SCHOOL</h1>
+        
+        <div class="slideshow-container">
+            <img src="image1.png" class="slide active" id="slide1">
+            <img src="image2.png" class="slide" id="slide2">
+            <div class="scan-line"></div>
+        </div>
 
-        <section class="hardware-wrapper">
-            <div class="image-frame">
-                <img src="usb_module.png" alt="Hardware Module">
-                <div class="scan-line"></div>
-                <div class="corner-tl"></div>
-                <div class="corner-br"></div>
-            </div>
-        </section>
-
-        <section class="audio-control-panel">
-            <div class="status-dot"></div>
-            <div class="track-info">
-                <span class="label">SYSTEM AUDIO:</span>
-                <marquee class="track-name">Mowzey Radio - Somesa Egwanga | ACTIVE</marquee>
-            </div>
-        </section>
+        <div class="status-box">
+            <span class="dot"></span> NOW PLAYING: Somesa Egwanga
+        </div>
     </div>
 
     <script src="script.js"></script>
 </body>
-    </html>
-    
+</html>
