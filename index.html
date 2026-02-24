@@ -3,36 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bulanga Tech - Image Showcase</title>
+    <title>Bulanga Tech Showcase</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div id="overlay" onclick="startApp()">
-        <div class="boot-content">
-            <button class="power-btn">INITIALIZE SYSTEM</button>
-            <p class="blink">CLICK TO START PRESENTATION</p>
-        </div>
+        <button class="power-btn">INITIALIZE SYSTEM</button>
+        <p class="status-text">CLICK TO START PRESENTATION</p>
     </div>
 
-    <audio id="bg-music" loop>
-        <source src="anthem.mp3" type="audio/mpeg">
-    </audio>
+    <div id="player" style="display:none;"></div>
 
     <div class="main-container">
-        <h1 id="title">BULANGA SECONDARY SCHOOL</h1>
+        <h1>BULANGA SECONDARY SCHOOL</h1>
         
-        <div class="slideshow-container">
-            <img src="image1.png" class="slide active" id="slide1">
-            <img src="image2.png" class="slide" id="slide2">
-            <div class="scan-line"></div>
+        <div class="photo-display">
+            <img src="inputs/Screenshot_20260223-223021.png" class="slide active">
+            <img src="inputs/Screenshot_20260223-222949.png" class="slide">
+            <div class="scanline"></div>
         </div>
 
-        <div class="status-box">
-            <span class="dot"></span> NOW PLAYING: Somesa Egwanga
+        <div class="footer-info">
+            <span class="pulse"></span> SYSTEM ACTIVE: Somesa Egwanga - Radio & Weasel
         </div>
     </div>
 
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script src="script.js"></script>
 </body>
 </html>
